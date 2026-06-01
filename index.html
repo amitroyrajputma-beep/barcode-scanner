@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Warehouse Scanner Auto Tab</title>
+    <title>Warehouse Scanner Auto Tab (Fixed)</title>
 
     <style>
         body{
@@ -35,7 +35,7 @@
 </head>
 <body>
 
-<h2>📦 Auto Tab Warehouse Scanner</h2>
+<h2>📦 Warehouse Scanner System</h2>
 
 <h3>Step 1: Load Box List</h3>
 
@@ -53,9 +53,9 @@ PH45358511412S
 
 <hr>
 
-<h3>Step 2: Scan Continuously</h3>
+<h3>Step 2: Scan or Type</h3>
 
-<input type="text" id="scanInput" autofocus placeholder="Scan barcode here">
+<input type="text" id="scanInput" placeholder="Scan or type barcode">
 
 <div id="result">Waiting for scan...</div>
 
@@ -66,21 +66,17 @@ let boxList = [];
 function loadBoxes(){
     let text = document.getElementById("boxInput").value;
 
-    boxList = text.split("\n").map(x => x.trim()).filter(x => x !== "");
+    boxList = text.split("\n")
+        .map(x => x.trim())
+        .filter(x => x !== "");
 
     document.getElementById("status").innerHTML =
         "✅ Loaded " + boxList.length + " boxes";
 
     document.getElementById("status").className = "ok";
 
-    focusScan();
-}
-
-// keep focus always on scanner input
-function focusScan(){
-    setTimeout(() => {
-        document.getElementById("scanInput").focus();
-    }, 100);
+    document.getElementById("result").innerHTML =
+        "Ready to scan or type...";
 }
 
 const input = document.getElementById("scanInput");
@@ -99,7 +95,6 @@ input.addEventListener("keydown", function(e){
             document.getElementById("result").innerHTML =
                 "⚠️ Load box list first!";
             document.getElementById("result").className = "bad";
-            focusScan();
             return;
         }
 
@@ -114,15 +109,9 @@ input.addEventListener("keydown", function(e){
             document.getElementById("result").className = "bad";
         }
 
-        // AUTO TAB / NEXT SCAN
         input.value = "";
-
-        focusScan(); // 👈 this is your auto-tab behavior
     }
 });
-
-// keep focus even if clicked elsewhere
-setInterval(focusScan, 1500);
 
 </script>
 
