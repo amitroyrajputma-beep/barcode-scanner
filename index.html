@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Box Search & Scanner</title>
+    <title>Warehouse Scanner Auto Tab</title>
 
     <style>
         body{
@@ -10,7 +10,7 @@
             margin-top:40px;
         }
 
-        input, textarea{
+        textarea, input{
             font-size:18px;
             padding:10px;
             width:320px;
@@ -18,13 +18,13 @@
         }
 
         #scanInput{
-            font-size:22px;
+            font-size:24px;
             text-align:center;
         }
 
         #result{
             margin-top:20px;
-            font-size:24px;
+            font-size:26px;
             font-weight:bold;
         }
 
@@ -35,12 +35,11 @@
 </head>
 <body>
 
-<h2>📦 Warehouse Scanner System</h2>
+<h2>📦 Auto Tab Warehouse Scanner</h2>
 
-<!-- STEP 1: SEARCH / LOAD BOX LIST -->
-<h3>Step 1: Paste or type box list</h3>
+<h3>Step 1: Load Box List</h3>
 
-<textarea id="boxInput" rows="5" placeholder="Enter box IDs (one per line)">
+<textarea id="boxInput" rows="5">
 PBA9294014508S
 PD31262424545S
 PH45358511412S
@@ -50,14 +49,13 @@ PH45358511412S
 
 <button onclick="loadBoxes()">Load Boxes</button>
 
-<div id="status" class="info">No boxes loaded yet</div>
+<div id="status" class="info">No boxes loaded</div>
 
 <hr>
 
-<!-- STEP 2: SCANNER -->
-<h3>Step 2: Scan Barcode</h3>
+<h3>Step 2: Scan Continuously</h3>
 
-<input type="text" id="scanInput" autofocus placeholder="Scan here">
+<input type="text" id="scanInput" autofocus placeholder="Scan barcode here">
 
 <div id="result">Waiting for scan...</div>
 
@@ -75,12 +73,19 @@ function loadBoxes(){
 
     document.getElementById("status").className = "ok";
 
-    document.getElementById("scanInput").focus();
+    focusScan();
+}
+
+// keep focus always on scanner input
+function focusScan(){
+    setTimeout(() => {
+        document.getElementById("scanInput").focus();
+    }, 100);
 }
 
 const input = document.getElementById("scanInput");
 
-input.addEventListener("keypress", function(e){
+input.addEventListener("keydown", function(e){
 
     if(e.key === "Enter"){
 
@@ -94,6 +99,7 @@ input.addEventListener("keypress", function(e){
             document.getElementById("result").innerHTML =
                 "⚠️ Load box list first!";
             document.getElementById("result").className = "bad";
+            focusScan();
             return;
         }
 
@@ -108,9 +114,15 @@ input.addEventListener("keypress", function(e){
             document.getElementById("result").className = "bad";
         }
 
+        // AUTO TAB / NEXT SCAN
         input.value = "";
+
+        focusScan(); // 👈 this is your auto-tab behavior
     }
 });
+
+// keep focus even if clicked elsewhere
+setInterval(focusScan, 1500);
 
 </script>
 
