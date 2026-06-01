@@ -1,37 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Warehouse Box Scanner</title>
+    <title>Box Search & Scanner</title>
 
     <style>
         body{
             font-family: Arial;
             text-align:center;
-            margin-top:60px;
+            margin-top:40px;
         }
 
-        input{
-            font-size:22px;
+        input, textarea{
+            font-size:18px;
             padding:10px;
-            width:300px;
+            width:320px;
+            margin:10px;
+        }
+
+        #scanInput{
+            font-size:22px;
             text-align:center;
         }
 
         #result{
             margin-top:20px;
-            font-size:26px;
+            font-size:24px;
             font-weight:bold;
         }
 
         .ok{ color:green; }
         .bad{ color:red; }
+        .info{ color:blue; }
     </style>
 </head>
 <body>
 
-<h2>📦 Box Scanner System</h2>
+<h2>📦 Warehouse Scanner System</h2>
 
-<p>Scan barcode using your scanner</p>
+<!-- STEP 1: SEARCH / LOAD BOX LIST -->
+<h3>Step 1: Paste or type box list</h3>
+
+<textarea id="boxInput" rows="5" placeholder="Enter box IDs (one per line)">
+PBA9294014508S
+PD31262424545S
+PH45358511412S
+</textarea>
+
+<br>
+
+<button onclick="loadBoxes()">Load Boxes</button>
+
+<div id="status" class="info">No boxes loaded yet</div>
+
+<hr>
+
+<!-- STEP 2: SCANNER -->
+<h3>Step 2: Scan Barcode</h3>
 
 <input type="text" id="scanInput" autofocus placeholder="Scan here">
 
@@ -39,11 +63,20 @@
 
 <script>
 
-const boxList = [
-    "PBA9294014508S",
-    "PD31262424545S",
-    "PH45358511412S"
-];
+let boxList = [];
+
+function loadBoxes(){
+    let text = document.getElementById("boxInput").value;
+
+    boxList = text.split("\n").map(x => x.trim()).filter(x => x !== "");
+
+    document.getElementById("status").innerHTML =
+        "✅ Loaded " + boxList.length + " boxes";
+
+    document.getElementById("status").className = "ok";
+
+    document.getElementById("scanInput").focus();
+}
 
 const input = document.getElementById("scanInput");
 
@@ -53,6 +86,17 @@ input.addEventListener("keypress", function(e){
 
         let value = input.value.trim();
 
+        if(value === ""){
+            return;
+        }
+
+        if(boxList.length === 0){
+            document.getElementById("result").innerHTML =
+                "⚠️ Load box list first!";
+            document.getElementById("result").className = "bad";
+            return;
+        }
+
         if(boxList.includes(value)){
             document.getElementById("result").innerHTML =
                 "✅ MATCH FOUND: " + value;
@@ -60,7 +104,7 @@ input.addEventListener("keypress", function(e){
         }
         else{
             document.getElementById("result").innerHTML =
-                "❌ NOT FOUND: " + value;
+                "❌ NOT IN LIST: " + value;
             document.getElementById("result").className = "bad";
         }
 
